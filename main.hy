@@ -2,7 +2,7 @@
 (import fileinput)
 (import datetime)
 
-(defn dateToIso[d]
+(defn dateToIso [d]
   (datetime.date.isocalendar (datetime.datetime.strptime d "%Y-%m-%d")))
 
 (defn getWeekDay [isoDay]
@@ -26,10 +26,8 @@
   (setv day (getWeekDay (. isoDay weekday)))
 
   (if (= l_location "Schule")
-    (print f"  - {day} {l_location} <!--- {l_date} -->\n    - {l_activity}")
-    (print f"  - {day} <!--- {l_date} -->\n    - {l_activity}")
-  )
-)
+    (print f"- {day} {l_location} <!-- {l_date} -->\n    - {l_activity}")
+    (print f"- {day} <!-- {l_date} -->\n    - {l_activity}")))
 
 (defn main []
   (pys "lines = [line for line in fileinput.input(encoding='utf-8')]")
