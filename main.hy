@@ -15,23 +15,29 @@
     6 "Samstag"
     7 "Sonntag"))
 
-(defn parseLine [l]
-  ; split the line
-  (pys "l = l.split(';')")
-  (pys "l_date = l[2]")
-  (pys "l_location = l[4]")
-  (pys "l_activity = l[-1]")
+(defn parseLines [lines]
+  (setv currentDay "")
 
-  (setv isoDay (dateToIso l_date))
-  (setv day (getWeekDay (. isoDay weekday)))
+  (for [l lines]
+    (setv l (.split (.replace (.strip l) #[["]] #[[]]) ";"))
 
-  (if (= l_location "Schule")
-    (print f"- {day} {l_location} <!-- {l_date} -->\n    - {l_activity}")
-    (print f"- {day} <!-- {l_date} -->\n    - {l_activity}")))
+    (setv lDate (get l 2))
+    (setv lLocation (get l 4))
+    (setv lActivity (get l -1))
+
+    (if (= currentDay lDate)
+      (printDay None None lActivity)
+      (do (setv currentDay lDate) (printDay currentDay lLocation lActivity)))))
+
+(defn printDay [lDate school activity]
+  (match #(lDate school activity)
+    [None None z] (print f"    - {z}")
+    [x "Schule" z] (do (setv isoDay (dateToIso x)) (setv weekDay (getWeekDay (. isoDay weekday))) (print f"- {weekDay} (Schule) <!-- {lDate} -->\n    - {z}"))
+    [x y z] (do (setv isoDay (dateToIso x)) (setv weekDay (getWeekDay (. isoDay weekday))) (print f"- {weekDay} <!-- {lDate} -->\n    - {z}"))))
 
 (defn main []
   (pys "lines = [line for line in fileinput.input(encoding='utf-8')]")
-  (for [element lines]
-    (parseLine (.replace (.strip element) #[["]] #[[]]))))
+  ;(pys "with open('zeiten.csv') as f: lines = [line for line in f]")
+  (parseLines lines))
 
 (main)
