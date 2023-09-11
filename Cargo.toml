@@ -1,8 +1,13 @@
 [package]
-name = "rust"
+name = "timy"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+tracing = "0.1.37"
+tracing-subscriber = "0.3.17"
+csv = "1.2"
+chrono = "0.4.30"
+serde = { version = "1.0.188", features = ["derive"] }
