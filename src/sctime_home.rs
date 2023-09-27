@@ -1,5 +1,6 @@
 use std::fs;
 use std::io;
+use std::path::PathBuf;
 
 use anyhow::anyhow;
 use tracing::{debug, trace};
@@ -20,6 +21,15 @@ pub fn parse_sctime_home() -> Result<(), anyhow::Error> {
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>()?;
     trace!("{:?}", entries);
+
+    //let entries = entries.into_iter();
+    //let entries: Vec<PathBuf> = entries
+    //    .iter()
+    //    .filter_map(|e)| if e.exists() { Some(e) } else { None });
+    //debug!("{:?}", entries);
+    let entries: Vec<PathBuf> = entries
+        .drain_fiter(|e| e.exists())
+        .collect::<Vec<PathBuf>>();
 
     Ok(())
 }

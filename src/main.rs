@@ -1,3 +1,5 @@
+#![feature(drain_filter)]
+
 use anyhow::anyhow;
 use tracing::{debug, error};
 
