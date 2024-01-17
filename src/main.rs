@@ -16,6 +16,12 @@ struct Record {
     comment: String,
 }
 
+fn parse_comment(comment: &String) -> String {
+    let comment = comment.replace(", ", " \n    - ");
+    let comment = comment.replace(",", " \n    - ");
+    comment
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let subscriber = FmtSubscriber::builder()
         .with_max_level(Level::TRACE)
@@ -28,6 +34,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .from_reader(io::stdin());
 
     let mut record_date = String::new();
+
     for result in rdr.deserialize() {
         let record: Record = match result {
             Ok(r) => r,
@@ -38,7 +45,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         if record.date == record_date {
-            println!("    - {}", record.comment);
+            let comment = parse_comment(&record.comment);
+            println!("    - {}", comment);
         } else {
             let chrono_date = NaiveDate::parse_from_str(&record.date, "%Y-%m-%d");
             let chrono_date = match chrono_date {
@@ -48,23 +56,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     continue;
                 }
             };
-            let chrono_date = chrono_date.weekday();
-            let iso_day = chrono_weekday_translate(chrono_date);
-            if record.sub_account == "Schule" {
-                println!(
-                    "- {} (Schule) <!-- {} -->\n    - {}",
-                    iso_day, record.date, record.comment
-                );
-            } else {
-                println!(
-                    "- {} <!-- {} -->\n    - {}",
-                    iso_day, record.date, record.comment
-                );
-            }
+
+            print_record(&record, chrono_date);
+
             record_date = record.date;
         }
     }
     Ok(())
+}
+
+fn print_record(record: &Record, chrono_date: chrono::NaiveDate) {
+    let chrono_date = chrono_date.weekday();
+    let iso_day = chrono_weekday_translate(chrono_date);
+    let comment = parse_comment(&record.comment);
+
+    match record.sub_account.as_str() {
+        "Schule" => {
+            println!(
+                "- {} (Schule) <!-- {} -->\n    - {}",
+                iso_day, record.date, comment
+            );
+        }
+        _ => {
+            println!("- {} <!-- {} -->\n    - {}", iso_day, record.date, comment);
+        }
+    }
 }
 
 fn chrono_weekday_translate(weekday: Weekday) -> String {
