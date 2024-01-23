@@ -35,6 +35,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut record_date = String::new();
 
+    let mut week_n: u32 = 1;
+    let mut iso_week: u32 = 0;
+
     for result in rdr.deserialize() {
         let record: Record = match result {
             Ok(r) => r,
@@ -57,7 +60,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             };
 
-            print_record(&record, chrono_date);
+            print_record(&record, chrono_date, &mut week_n, &mut iso_week);
 
             record_date = record.date;
         }
@@ -65,9 +68,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn print_record(record: &Record, chrono_date: chrono::NaiveDate) {
-    let chrono_date = chrono_date.weekday();
-    let iso_day = chrono_weekday_translate(chrono_date);
+fn print_record(record: &Record, chrono_date: chrono::NaiveDate, last_week_n: &mut u32, last_iso_week: &mut u32) {
+    {
+        // counter for week number
+        let chrono_iso_week = chrono_date.iso_week();
+        let chrono_iso_week = chrono_iso_week.week();
+        if chrono_iso_week != *last_iso_week {
+            *last_iso_week = chrono_iso_week;
+
+            println!("<!-- {} -->", last_week_n);
+            *last_week_n += 1;
+        }
+    }
+
+    let chrono_weekday = chrono_date.weekday();
+    let iso_day = chrono_weekday_translate(chrono_weekday);
     let comment = parse_comment(&record.comment);
 
     match record.sub_account.as_str() {
