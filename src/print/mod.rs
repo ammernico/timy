@@ -18,12 +18,12 @@ pub fn print(
         Some((other, _)) => {
             error!("Unknown subcommand: {}", other);
             error!("Use --help to find available subcommands");
-            return Err(anyhow!("Unknown subcommand: {}", other));
+            Err(anyhow!("Unknown subcommand: {}", other))
         }
         None => {
             error!("No subcommand.");
             error!("Use --help to find available subcommands");
-            return Err(anyhow!("No subcommand"));
+            Err(anyhow!("No subcommand"))
         }
     }
 }
@@ -40,8 +40,7 @@ fn chrono_weekday_translate(weekday: Weekday) -> String {
     }
 }
 
-fn parse_comment(comment: &String) -> String {
+fn parse_comment(comment: &str) -> String {
     let comment = comment.replace(", ", " \n    - ");
-    let comment = comment.replace(",", " \n    - ");
-    comment
+    comment.replace(',', " \n    - ")
 }

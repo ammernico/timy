@@ -25,16 +25,16 @@ fn main() -> Result<(), anyhow::Error> {
         .from_reader(io::stdin());
 
     match cli.subcommand() {
-        Some(("print", matches)) => print::print(rdr, &matches),
+        Some(("print", matches)) => print::print(rdr, matches),
         Some((other, _)) => {
             error!("Unknown subcommand: {}", other);
             error!("Use --help to find available subcommands");
-            return Err(anyhow!("Unknown subcommand: {}", other));
+            Err(anyhow!("Unknown subcommand: {}", other))
         }
         None => {
             error!("No subcommand.");
             error!("Use --help to find available subcommands");
-            return Err(anyhow!("No subcommand"));
+            Err(anyhow!("No subcommand"))
         }
     }
 }
