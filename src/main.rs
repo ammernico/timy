@@ -1,8 +1,7 @@
-use anyhow::anyhow;
 use clap::ArgMatches;
 use csv::ReaderBuilder;
 use std::io;
-use tracing::{debug, error, Level};
+use tracing::{debug, Level};
 use tracing_subscriber::FmtSubscriber;
 
 mod cli;
@@ -24,17 +23,6 @@ fn main() -> Result<(), anyhow::Error> {
         .has_headers(false)
         .from_reader(io::stdin());
 
-    match cli.subcommand() {
-        Some(("print", matches)) => print::print(rdr, matches),
-        Some((other, _)) => {
-            error!("Unknown subcommand: {}", other);
-            error!("Use --help to find available subcommands");
-            Err(anyhow!("Unknown subcommand: {}", other))
-        }
-        None => {
-            error!("No subcommand.");
-            error!("Use --help to find available subcommands");
-            Err(anyhow!("No subcommand"))
-        }
-    }
+    let _ = print::print(rdr, cli);
+    Ok(())
 }
