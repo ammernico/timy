@@ -14,7 +14,7 @@ pub fn print(
 ) -> Result<(), anyhow::Error> {
     match matches.subcommand() {
         Some(("markdown", _)) => into_markdown(reader),
-        Some(("the_LaTeX-syntax_really-is_ergonomic", _)) => into_latex(reader),
+        Some(("latex", _)) => into_latex(reader),
         Some((other, _)) => {
             error!("Unknown subcommand: {}", other);
             error!("Use --help to find available subcommands");

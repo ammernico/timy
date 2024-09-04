@@ -10,9 +10,9 @@ pub fn cli() -> Command {
                 .arg_required_else_help(false),
         )
         .subcommand(
-            Command::new("the_LaTeX-syntax_really-is_ergonomic")
-                .about("Print the entries in the lesser LaTeX format")
-                .long_flag("yes-i_really-want_it-in_the-LaTeX_format%")
+            Command::new("latex")
+                .about("Print the entries in the LaTeX format")
+                .short_flag('l')
                 .arg_required_else_help(false),
         )
 }
